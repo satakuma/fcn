@@ -26,7 +26,7 @@ with strategy.scope():
     loss = "sparse_categorical_crossentropy"
     metrics = [
         SparseCategoricalAccuracyVoidPixel(void_pixel=void_pixel),
-        VoidPixelMeanIoU(void_pixel=void_pixel),
+        VoidPixelMeanIoU(num_classes=nb_classes, void_pixel=void_pixel),
     ]
 
     model.compile(optimizer=optimizer, loss=loss, metrics=metrics)

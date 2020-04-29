@@ -3,9 +3,9 @@ import tensorflow as tf
 from tensorflow.keras.metrics import MeanIoU, sparse_categorical_accuracy
 
 
-class VoidPixelMeanIoU(MeanIou):
-    def __init__(self, *args, void_pixel=None, **kwargs):
-        super(ArgmaxMeanIoU, self).__init__(*args, **kwargs)
+class VoidPixelMeanIoU(MeanIoU):
+    def __init__(self, *args, void_pixel, **kwargs):
+        super(VoidPixelMeanIoU, self).__init__(*args, **kwargs)
         self.void_pixel = void_pixel
     
     def update_state(self, y_true, y_pred, sample_weight=None):
@@ -16,7 +16,7 @@ class VoidPixelMeanIoU(MeanIou):
             mask = tf.math.not_equal(y_true, self.void_pixel)
             y_true = tf.boolean_mask(y_true, mask)
             y_pred = tf.boolean_mask(y_pred, mask)
-        super(ArgmaxMeanIoU, self).update_state(y_true, y_pred, sample_weight)
+        super(VoidPixelMeanIoU, self).update_state(y_true, y_pred, sample_weight)
 
 
 class ArgmaxMeanIoU(MeanIoU):
@@ -25,6 +25,8 @@ class ArgmaxMeanIoU(MeanIoU):
 
     def update_state(self, y_true, y_pred, sample_weight=None):
         super(ArgmaxMeanIoU, self).update_state(y_true, tf.math.argmax(y_pred, axis=-1), sample_weight)
+
+def sparse_categorical_accuracy_void_pixel(y_true, y_pred):
 
 
 class SparseCategoricalAccuracyVoidPixel:
