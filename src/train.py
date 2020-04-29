@@ -8,7 +8,7 @@ from tensorflow.keras.optimizers import Adadelta, RMSprop, SGD
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint, LearningRateScheduler
 
 from models import *
-from metrics import SparseCategoricalAccuracyVoidPixel, VoidPixelMeanIoU
+from metrics import VoidPixelAccuracy, VoidPixelMeanIoU
 from dalib import ImageAugmentator
 
 TRAIN_LEN = 8498
@@ -25,7 +25,7 @@ with strategy.scope():
     optimizer = Adadelta(lr=8e-3)
     loss = "sparse_categorical_crossentropy"
     metrics = [
-        SparseCategoricalAccuracyVoidPixel(void_pixel=void_pixel),
+        VoidPixelAccuracy(void_pixel=void_pixel),
         VoidPixelMeanIoU(num_classes=nb_classes, void_pixel=void_pixel),
     ]
 
@@ -51,7 +51,7 @@ train_generator = ImageAugmentator(
     crop="class",
     preprocessing_function=preprocess_input,
     void_pixel=void_pixel,
-    pad_to_multiply_of=32,
+    pad_to_multiple_of=32,
 )
 
 val_generator = ImageAugmentator(
@@ -64,7 +64,7 @@ val_generator = ImageAugmentator(
     crop=None,
     preprocessing_function=preprocess_input,
     void_pixel=void_pixel,
-    pad_to_multiply_of=32,
+    pad_to_multiple_of=32,
 )
 
 model.fit(
